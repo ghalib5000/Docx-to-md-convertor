@@ -15,9 +15,9 @@ namespace Reader
              c.read();
             // c.disp();
              c.writer();
-           //  string docin,docout;
+            // string docin,docout;
             // Read document = new Read();
-           //  docin =document.File();
+            // docin =document.File();
             // docout=document.Write();
             // document.Convert(docin, docout);
         }

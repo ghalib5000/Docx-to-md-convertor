@@ -29,18 +29,14 @@ namespace Reader
                 FileLocation = Console.ReadLine();
                 string t= Path.GetExtension(FileLocation);
                 Console.WriteLine(t);
-               // this.file_docx = FileLocation.Substring(FileLocation.Length - 4);
-              //  this.file_md = FileLocation.Substring(FileLocation.Length - 2);
-              /*  if (file_docx == "docx" || file_md == "md"||file_docx==".xml")
+                if (file_docx == "docx" || file_md == "md"||file_docx==".xml")
                 {
                 }
                 else
                 {
                     throw new Exception("Wrong type!");
                 }
-                */
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
