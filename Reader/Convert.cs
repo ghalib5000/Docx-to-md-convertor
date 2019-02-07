@@ -16,14 +16,17 @@ namespace Reader
 
         private static string FileLocation = @"D:\convertor\test - Copy\word\document.xml";
         private static string FileLocation2 = @"D:\convertor\test.docx";
-        private static string write_loc = "";
+        private static string write_loc = @"D:\";
         private const string boldfinder = "<w:b />";
         private const string italicfinder = "<w:i />";
+        private const string spaces = "xml:space= \"preserve\"";
         /*static XmlNode node = null;
         static XmlDocument xDoc = null;
         static XmlNode locNode = null;*/
-        private static int boldstart = 0, italicstart = 0, boldlines = 0, italiclines = 0, linecount = 0;
+        private static int boldstart = 0, italicstart = 0, boldlines = 0, italiclines = 0, linecount = 0,k=0;
         private static string[] filedata = new string[linecount];
+        private static string[] totdata = new string[linecount];
+        private string standby = "";
         public void read()
         {
             try
@@ -73,24 +76,72 @@ namespace Reader
                     {
                         linecount++;
                     }
-                    filedata =new string[linecount];
+                    filedata = new string[15];
+                    totdata = new string[15];
                     foreach (XmlNode locNode in node)
                     {
                         // get the content of the loc node 
-                        string loc = locNode.InnerText;
-                        // bold.boldchecker("<w:b/>", "**", node, locNode, i);
-                        // italic.boldchecker("<w:i/>","_", node, locNode, i);
-                        text.boldchecker(locNode.OuterXml, locNode.InnerText, i);
+                        string maintext = locNode.InnerXml ;
+                        //  Match mc = Regex.Match(loc, @"(?</w:rPr><w:t>).+(?=</w:t>)");
+                        
+                        //  Console.WriteLine(mc);
+                        string[] seperator = new string[] { "<w:t>", "</w:t>", "<w:t xml:space=\"preserve\">", "<w:t xml:space=\"preserve\"> " };
+                        string[]fintext = maintext.Split (seperator,StringSplitOptions.None);
+                        for(int j =1;j<fintext.Length-1;j+=2,k++)
+                        {
+                          //  filedata[k] = fintext[j];
+                        //    Console.WriteLine(fintext[j]);
+                            text.boldchecker(fintext[j-1], fintext[j], k);
+                            if(standby=="")
+                            {
+                                standby = filedata[k];
+                                totdata[i] += standby;
+                            }
+                            else if (standby == filedata[k - 1])
+                            {
+                                standby = filedata[k];
+                                totdata[i] += standby;
+                            }
+                            else if (standby != filedata[k - 1])
+                            {
+                                totdata[i - 1] = totdata[i - 1].Replace(standby,filedata[k - 1]);
+                                standby = filedata[k];
+                                totdata[i] += standby;
+                                //totdata[i-1]  += filedata[k-1];
+                            }
+                            else if(standby!=filedata[k]&&standby!=null)
+                            {
+                                standby = filedata[k];
+                                totdata[i] += standby;
+                            }
+                            else
+                            {
+                                totdata[i] += standby;
+                            }
+                            // filedata[k];
+                        }
+                        //an array of string that will store the final output of line
+                       //foreach(string t in filedata)
+                        {
+                         //   totdata[i] += t;
+                        }
                         i++;
                     }
                 }
-                writelocationchecker();
                 
-                foreach (string t in filedata)
+                //writelocationchecker();
+                
+                foreach (string t in totdata)
                 {
                     File.AppendAllText(write_loc+"output.md", t+Environment.NewLine);
-                }                
+                }  
+                  
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
                 Dispstring(filedata);
+                
             }
             catch (Exception ex)
             {
@@ -136,32 +187,34 @@ namespace Reader
                 {
                     filedata[i] = InnerText;
                     //for bold starting
-                    if ((Regex.IsMatch(OuterText, boldfinder)) && boldstart == 0 && italicstart == 0)
+                    if ((Regex.IsMatch(OuterText, boldfinder)) && boldstart == 0)
                     {
                         boldstart = 1;
                         filedata[i] = "**" + InnerText;
-                     //      Console.WriteLine(filedata[i]);
+                           Console.WriteLine(filedata[i]);
                     }
+                    /*
                     //if italic is already started but bold is not
                     else if ((Regex.IsMatch(OuterText, italicfinder)) && italicstart == 1 && boldstart == 0)
                     {
                         boldstart = 1;
-                        filedata[i - 1] += " **" + InnerText;
+                        filedata[i] += " **" + InnerText;
                         //    Console.WriteLine(filedata[i]);
                     }
+                    */
                     //when bold is initialized
                     else if ((Regex.IsMatch(OuterText, boldfinder)) && boldstart == 1)
                     {
                         boldlines++;
                         filedata[i] = InnerText;
-                     //      Console.WriteLine(filedata[i]);
+                           Console.WriteLine(filedata[i]);
                     }
                     //when bold ends
                     else if (!(Regex.IsMatch(OuterText, boldfinder)) && boldstart == 1)
                     {
                         // boldlines++;
                         filedata[i - 1] += "**";
-                     //      Console.WriteLine(filedata[i]);
+                           Console.WriteLine(filedata[i]);
                         boldstart = 0;
                     }
                     //for bold italic
@@ -173,32 +226,33 @@ namespace Reader
                 //italic data
                 {
                     //for italic starting
-                    if ((Regex.IsMatch(OuterText, italicfinder)) && italicstart == 0 && boldstart == 0)
+                    if ((Regex.IsMatch(OuterText, italicfinder)) && italicstart == 0)
                     {
                         italicstart = 1;
                         filedata[i] = "_" + InnerText;
-                        //    Console.WriteLine(filedata[i]);
-                    }
+                            Console.WriteLine(filedata[i]);
+                    }/*
                     //if bold is already started but italic is not
                     else if((Regex.IsMatch(OuterText, italicfinder)) && italicstart == 0 && boldstart == 1)
                         {
                             italicstart = 1;
-                            filedata[i-1] += " _" + InnerText;
+                            filedata[i] += " _" + InnerText;
                             //    Console.WriteLine(filedata[i]);
                         }
+                        */
                         //when italic is initialized
                         else if ((Regex.IsMatch(OuterText, italicfinder)) && italicstart == 1)
                     {
                         italiclines++;
                         filedata[i] = InnerText;
-                       //    Console.WriteLine(filedata[i]);
+                           Console.WriteLine(filedata[i]);
                     }
                     //when italic ends
                     else if (!(Regex.IsMatch(OuterText, italicfinder)) && italicstart == 1)
                     {
                         // italiclines++;
                         filedata[i - 1] += "_";
-                       //    Console.WriteLine(filedata[i]);
+                          Console.WriteLine(filedata[i]);
                         italicstart = 0;
                     }
                     //for bold italic
