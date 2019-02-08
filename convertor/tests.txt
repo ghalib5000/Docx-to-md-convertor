@@ -1,0 +1,33 @@
+D:\convertor\test.docx
+
+
+D:\convertor\New folder12\shortcut folders\Downloads\CP Class activity.docx
+
+
+D:\convertor\README.md
+
+D:\convertor\test.docx
+
+
+D:/tester.md
+
+
+D:\out.md
+
+
+D:\convertor\test - Copy\word\document.xml
+
+
+D:\document.xml
+
+
+for bold:
+<w:pPr><w:rPr><w:b /></w:rPr></w:pPr><w:r><w:rPr><w:b /></w:rPr>
+
+for italic:
+<w:pPr><w:rPr><w:i /></w:rPr></w:pPr><w:r><w:rPr><w:i /></w:rPr>
+
+for normal:
+<w:r><w:t>
+
+

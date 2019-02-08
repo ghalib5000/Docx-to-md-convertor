@@ -1,0 +1,44 @@
+/* if (locNode.OuterXml.Contains("<w:pPr><w:rPr><w:b /></w:rPr></w:pPr><w:r><w:rPr><w:b /></w:rPr>") && textstyle == 0 && linecount == 0)
+                            {
+                                //bold starts here
+                                filedata[i] = "**" + locNode.InnerText;
+                                File.AppendAllText(write_loc, "**");
+                                Console.WriteLine("FOUUUUUND IT!!!!!!!");
+                                //   Console.WriteLine(locNode.OuterXml);
+                                textstyle = 1;
+                                totalLines++;
+                            }
+                            else if (locNode.OuterXml.Contains("<w:pPr><w:rPr><w:b /></w:rPr></w:pPr><w:r><w:rPr><w:b /></w:rPr>") && textstyle == 1)
+                            {
+                                filedata[i] = locNode.InnerText;
+                                totalLines++;
+                                linecount++;
+                            }
+                            //bold style terminator
+                            else if (linecount == 0 && textstyle == 1)
+                            {
+                                Console.WriteLine("BOLD ENDED!");
+                                //Console.SetCursorPosition(loc.Length, totalLines);
+                                // File.AppendAllText(write_loc, "**");
+                                filedata[i - 2] += "**";
+                                filedata[i] = locNode.InnerText;
+                                textstyle = 0;
+
+                            }
+                            else if (locNode.OuterXml.Contains("<w:r><w:t>") && linecount == 1)
+                            {
+                                //bold dissapears here
+                            }
+                            else
+                            {
+                                filedata[i] = locNode.InnerText;
+                                linecount = 0;
+                            }
+                            // write it to the console so you can see its working 
+                            //Console.WriteLine(loc + Environment.NewLine);
+                            // string t = "<b>"+locNode.InnerText+"</b>";
+                            // Console.WriteLine(locNode.InnerText);
+                            // write it to the file 
+                            i++;
+                            //File.AppendAllText(write_loc, locNode.InnerText + Environment.NewLine);
+                            */
