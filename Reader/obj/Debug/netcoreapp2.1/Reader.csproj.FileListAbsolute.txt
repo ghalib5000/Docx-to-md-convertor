@@ -24,3 +24,16 @@ D:\Projects\C# programs\File Reader\Docx-to-md-convertor\Reader\obj\Debug\netcor
 D:\Projects\C# programs\File Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.csproj.CopyComplete
 D:\Projects\C# programs\File Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.dll
 D:\Projects\C# programs\File Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.pdb
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\bin\Debug\netcoreapp2.1\Reader.deps.json
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\bin\Debug\netcoreapp2.1\Reader.runtimeconfig.json
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\bin\Debug\netcoreapp2.1\Reader.runtimeconfig.dev.json
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\bin\Debug\netcoreapp2.1\Reader.dll
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\bin\Debug\netcoreapp2.1\Reader.pdb
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\bin\Debug\netcoreapp2.1\Microsoft.Office.Interop.Word.dll
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.csprojAssemblyReference.cache
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.csproj.CoreCompileInputs.cache
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.AssemblyInfoInputs.cache
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.AssemblyInfo.cs
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.csproj.CopyComplete
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.dll
+D:\projects\C#\Reader\Docx-to-md-convertor\Reader\obj\Debug\netcoreapp2.1\Reader.pdb

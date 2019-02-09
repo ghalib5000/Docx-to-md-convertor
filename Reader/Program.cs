@@ -11,15 +11,18 @@ namespace Reader
     {
         static void Main(string[] args)
         {
-             Convertor c = new Convertor();
-             c.read();
-            // c.disp();
-             c.writer();
-            // string docin,docout;
-            // Read document = new Read();
+            string docin, docout;
+            Read document = new Read();
+            document.func();
             // docin =document.File();
             // docout=document.Write();
             // document.Convert(docin, docout);
-        }
+
+            Convertor c = new Convertor();
+             c.read();
+            // c.disp();
+             c.writer();
+
+           }
     }
 }
