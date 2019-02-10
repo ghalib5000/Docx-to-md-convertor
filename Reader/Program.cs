@@ -13,16 +13,16 @@ namespace Reader
         {
             string docin, docout;
             Read document = new Read();
-            document.func();
-            // docin =document.File();
+          //  document.func();
+             docin =document.File();
             // docout=document.Write();
             // document.Convert(docin, docout);
 
-            Convertor c = new Convertor();
-             c.read();
+          //  Convertor c = new Convertor();
+           //  c.read();
             // c.disp();
-             c.writer();
-
+           //  c.writer();
+//
            }
     }
 }

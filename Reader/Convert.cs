@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace Reader
 {
-    class Convertor:Read
+    class Convertor
     {
 
         private static string FileLocation = @"D:\convertor\test - Copy\word\document.xml";
@@ -23,6 +23,7 @@ namespace Reader
         /*static XmlNode node = null;
         static XmlDocument xDoc = null;
         static XmlNode locNode = null;*/
+        string[] fintext;
         private static int boldstart = 0, italicstart = 0, boldlines = 0, italiclines = 0, linecount = 0, k = 0;
         private static string[] filedata = new string[linecount];
         private static string[] totdata = new string[linecount];

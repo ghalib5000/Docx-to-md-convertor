@@ -18,9 +18,14 @@ namespace Reader
         private static string FileLocation2 = @"D:\convertor\test.docx";
         private static string write_loc = @"D:\";
         private static string totalRawText = "";
-        protected static string[] fintext;
-        private string file_docx = "";
-        private string file_md = "";
+        private static string[] LinedText;
+        private static string[] WordedText;
+        private static string[] finalText;
+        private static string bold_parameters   = "<w:b /></w:rPr><w:t";
+        private static string italic_parameters ="<w:i /></w:rPr><w:t";
+        private static string bold_italic = "<w:b /><w:i /></w:rPr><w:t";
+        private static string italic_bold = "<w:i /><w:b /></w:rPr><w:t";
+        int bold = 0, italic = 0;
         private string response = "";
 
 
@@ -31,13 +36,18 @@ namespace Reader
         {
             try
             {
-
-                Console.Write("enter the location of the file: ");
-                FileLocation = Console.ReadLine();
+             //   Console.Write("enter the location of the file: ");
+              //  FileLocation = Console.ReadLine();
                 string t = Path.GetExtension(FileLocation);
-                Console.WriteLine(t);
-                if (file_docx == "docx" || file_md == "md" || file_docx == ".xml")
+                // Console.WriteLine(t);
+                Console.WriteLine();
+                if (t == ".docx" || t == ".xml")
                 {
+                   // createWriteLocation(FileLocation);
+                    Reader(FileLocation);
+                    //Writer(LinedText, write_loc);
+                    //bold italic is 1,italic bold is 2,bold is 3,italic is 4 
+                    styleChecker(LinedText,bold_italic,italic_bold,bold_parameters, italic_parameters);
                 }
                 else
                 {
@@ -50,75 +60,115 @@ namespace Reader
             }
             return FileLocation;
         }
+        public void styleChecker(string[] text, string st1, string st2, string st3, string st4)
+        {
+            int i = 0;
+            foreach(string line in text)
+            {
+                lineSplitter(line);
+                foreach (string words in WordedText)
+                {
+                    //starters
+                    {
+                        //bold italic starter
+                        if (words.Contains(st1) && bold == 0 && italic == 0)
+                        {
+                            finalText[i] += "**_" + words;
+                            bold = 1;
+                            italic = 1;
+                        }
+                        //italic bold starter
+                        else if (words.Contains(st2) && bold == 0 && italic == 0)
+                        {
+                            finalText[i] +=  "_**" + words;
+                            bold = 1;
+                            italic = 1;
+                        }
+                        //bold starter
+                        else if (words.Contains(st3) && bold == 0)
+                        {
+                            finalText[i] += "**" + words;
+                            bold = 1;
+                        }
+                        //italic starter
+                        else if (words.Contains(st4) && italic == 0)
+                        {
+                            finalText[i] += "_" + words;
+                            italic = 1;
+                        }
+                    }
+                    //when style is started
+                    {
+                        //bold italic 
+                        if (words.Contains(st1) && bold == 0 && italic == 1)
+                        {
+                            finalText[i] += "**" + words;
+                            bold = 1;
+                        }
+                        //italic bold
+                        else if (words.Contains(st2) && bold == 0 && italic == 1)
+                        {
+                            finalText[i] += "**" + words;
+                            bold = 1;
+                        }
+                        //bold italic
+                        else if (words.Contains(st1) && bold == 1 && italic == 0)
+                        {
+                            finalText[i] += "_" + words;
+                            italic = 1;
+                        }
+                        //italic bold
+                        else if (words.Contains(st2) && bold == 1 && italic == 0)
+                        {
+                            finalText[i] += "_" + words;
+                            italic = 1;
+                        }
+                        //bold 
+                        else if (words.Contains(st3) && bold == 1)
+                        {
+                            finalText[i] += words;
+                        }
+                        //italic
+                        else if (words.Contains(st4) && italic == 1)
+                        {
+                            finalText[i] += words;
+                        }
+                    }
+                }
+                //Writer(WordedText, write_loc);
+                i++;
+            }
+        }
+        public void lineSplitter(string lines)
+        {
+                WordedText = lines.Split("</w:t></w:r>");
+        }
+
         /// <summary>
-        /// writes the contents of the file to a new location
+        /// Creates a new location to write the contents of file to
         /// </summary>
-        public string Write()
+        public string createWriteLocation(string FileLocation)
         {
             try
             {
-                string[] s = System.IO.File.ReadAllLines(FileLocation);
-                if (this.file_md == "md")
+                Console.Write("Convert to .md file?: ");
+                response = Console.ReadLine();
+                response = response.ToLower();
+                if (response[0] == 'y')
                 {
-                    string response = "";
-                    Console.Write("Convert to .docx file?: ");
-                    response = Console.ReadLine();
-                    if (response == "yes" || response == "y" || response == "Y")
+                    Console.Write("enter the location for saving the file:");
+                    write_loc = Console.ReadLine();
+                    if (!Directory.Exists(write_loc))
                     {
-                        Console.Write("enter the location for saving the file:");
-                        write_loc = Console.ReadLine();
-                        if (!Directory.Exists(write_loc))
+                        Console.Write("Directory does not exsits....create one?: ");
+                        response = Console.ReadLine();
+                        response = response.ToLower();
+                        if (response[0] =='y')
                         {
-                            Console.Write("Directory does not exsits....create one?: ");
-                            response = Console.ReadLine();
-                            if (response == "yes" || response == "y" || response == "Y")
-                            {
-                                Directory.CreateDirectory(write_loc);
-                            }
+                            Directory.CreateDirectory(write_loc);
                         }
-                        write_loc += "out.docx";
-                        //File.WriteAllLines(write_loc, s);
-                        /* for(int i=0;i<s.Length;i++)
-                         {
-                           Console.WriteLine((i / s.Length) * 100);
-                         }*/
-                        //   Convert(FileLocation, write_loc, WdSaveFormat.wdFormatXMLDocument);
                     }
-                    else
-                    {
-                        Console.WriteLine("Exiting...");
-                    }
-                }
-                else if (this.file_docx == "docx" || this.file_docx == ".xml")
-                {
-
-                    Console.Write("Convert to .md file?: ");
-                    response = Console.ReadLine();
-                    if (response == "yes" || response == "y" || response == "Y")
-                    {
-                        Console.Write("enter the location for saving the file:");
-                        write_loc = Console.ReadLine();
-                        if (!Directory.Exists(write_loc))
-                        {
-                            Console.Write("Directory does not exsits....create one?: ");
-                            response = Console.ReadLine();
-                            if (response == "yes" || response == "y" || response == "Y")
-                            {
-                                Directory.CreateDirectory(write_loc);
-                            }
-                        }
-                        write_loc += "out.md";
-                        /* for (float i = 0; i < s.Length; i++)
-                          {
-                              Console.WriteLine((i / s.Length) * 100);
-                           File.WriteAllLines (write_loc, s);
-                          }*/
-                        //  Convert(FileLocation, write_loc, WdSaveFormat.wdFormatRTF);//wdFormatXML);// WdSaveFormat.wdFormatUnicodeText);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Exiting...");
-                    }
+                    write_loc += "out.md";
                 }
             }
             catch (DirectoryNotFoundException dirntfnd)
@@ -133,9 +183,12 @@ namespace Reader
             return write_loc;
         }
 
-        public void func()
+        /// <summary>
+        /// Reads and splits the xml text into each seperate line
+        /// </summary>
+        public void Reader(string fileloc)
         {
-            XmlTextReader textReader = new XmlTextReader(FileLocation);
+            XmlTextReader textReader = new XmlTextReader(fileloc);
             textReader.Read();
             XmlDocument xdoc = new XmlDocument();
             xdoc.Load(textReader);
@@ -144,181 +197,43 @@ namespace Reader
                 //the raw text is extracted from the xml onto the string
                 totalRawText = xdoc.DocumentElement.InnerXml;
                 //                Console.WriteLine(totalRawText);
-                recursivefunc(totalRawText, "</w:p>");
-               /* foreach (string t in fintext)
-                {
-                    if (t.Contains("<w:b />"))
-                    {
-                        recursivefunc(t, "<w:b />");
-                    }
-                    else if (t.Contains("<w:i />"))
-                    {
-                        recursivefunc(t, "<w:i />");
-                    }
-                }
-                */
+                Splitter(totalRawText, "</w:p>");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
         }
-
-        public static void recursivefunc(string text, string pattern)
+        /// <summary>
+        /// splits the xml text with the given pattern
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="pattern"></param>
+        public static void Splitter(string text, string pattern)
         {
-
-            fintext = totalRawText.Split(pattern);
+            //spliting each line of text into an array
+            LinedText = totalRawText.Split(pattern);
             //iterating through each index of the total text lines
-            foreach (string t in fintext)
+          /*  foreach (string t in LinedText)
             {
-               
-                //    System.IO.File.AppendAllText(write_loc + "output.md", t + Environment.NewLine);
                 Console.WriteLine(t);
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine();
-
-            }
+            }*/
         }
-
-
-
-
-
-
-
-        // Convert a Word 2008 .docx to Word 2003 .doc
-        public void Convert(string input, string output)
+        /// <summary>
+        /// writes the contents of string array to a new file in each line
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="outputLocation"></param>
+        public void Writer(string[] text,string outputLocation)
         {
-            WdSaveFormat format = WdSaveFormat.wdFormatUnicodeText;
-            // Create an instance of Word.exe
-            Word._Application oWord = new Word.Application();
-
-            if (this.file_md == "md")
+            foreach(string t in text)
             {
-                format = WdSaveFormat.wdFormatStrictOpenXMLDocument;
-            }
-            else if (this.file_docx == "docx" || this.file_docx == ".xml")
-            {
-                format = WdSaveFormat.wdFormatUnicodeText;
-            }
-
-            // Interop requires objects.
-            object oMissing = System.Reflection.Missing.Value;
-            object isVisible = true;
-            object readOnly = false;
-            object oInput = input;
-            object oOutput = output;
-            object oFormat = format;
-
-            try
-            {
-
-                // Make this instance of word invisible (Can still see it in the taskmgr).
-                oWord.Visible = false;
-
-                // Load a document into our instance of word.exe
-                Word._Document oDoc = oWord.Documents.Open(ref oInput, ref oMissing, ref readOnly, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref isVisible, ref oMissing, ref oMissing, ref oMissing, ref oMissing);
-
-                // Make this document the active document.
-                oDoc.Activate();
-
-                // Save this document in Word 2003 format.
-                oDoc.SaveAs(ref oOutput, ref oFormat, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing);
-                // Always close Word.exe.
-                oWord.Quit(ref oMissing, ref oMissing, ref oMissing);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                oWord.Quit(ref oMissing, ref oMissing, ref oMissing);
+                System.IO.File.AppendAllText(outputLocation, t);
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /* void IRead.Convert(string input, string output)
-         {
-             WdSaveFormat format = WdSaveFormat.wdFormatUnicodeText;
-             string[] s = File.ReadAllLines(FileLocation);
-             // Create an instance of Word.exe
-             Word._Application oWord = new Word.Application();
-
-             // Make this instance of word invisible (Can still see it in the taskmgr).
-             oWord.Visible = false;
-             // Interop requires objects.
-             object oMissing = System.Reflection.Missing.Value;
-             object isVisible = true;
-             object readOnly = false;
-             object oInput = input;
-             object oOutput = output;
-             object oFormat = format;
-             try
-             {
-                 if (file_docx == "docx")
-                 {
-                     format = WdSaveFormat.wdFormatUnicodeText;
-                 }
-                 if (file_md == "md")
-                 {
-                     format = WdSaveFormat.wdFormatDocument;
-                 }
-
-                 // Load a document into our instance of word.exe
-                 Word._Document oDoc = oWord.Documents.Open(ref oInput, ref oMissing, ref readOnly, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref isVisible, ref oMissing, ref oMissing, ref oMissing, ref oMissing);
-
-                 // Make this document the active document.
-                 oDoc.Activate();
-
-                 // Save this document in Word 2003 format.
-                 oDoc.SaveAs(ref oOutput, ref oFormat, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing);
-
-                 // Always close Word.exe.
-                 oWord.Quit(ref oMissing, ref oMissing, ref oMissing);
-             }
-             catch (Exception ex)
-             {
-                 Console.WriteLine(ex);
-                 oWord.Quit(ref oMissing, ref oMissing, ref oMissing);
-             }
-         }*/
     }
 }
 
