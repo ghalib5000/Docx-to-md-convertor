@@ -17,15 +17,13 @@ namespace Reader
         private static string FileLocation = @"D:\convertor\test - Copy\word\document.xml";
         private static string FileLocation2 = @"D:\convertor\test.docx";
         private static string write_loc = @"D:\";
-        private static string totalRawText = "";
-        private static string[] LinedText;
-        private static string[] WordedText;
-        private static string[] finalText;
-        private static string bold_parameters   = "<w:b /></w:rPr><w:t";
-        private static string italic_parameters ="<w:i /></w:rPr><w:t";
-        private static string bold_italic = "<w:b /><w:i /></w:rPr><w:t";
-        private static string italic_bold = "<w:i /><w:b /></w:rPr><w:t";
-        int bold = 0, italic = 0;
+        private static string[] StandbyText = new string[3];
+        private static string[] filedata = new string[15];
+        private static string[] finalText = new string[15];
+        private static string bold ="b" ;
+        private static string italic = "i";
+        int boldstart = 0, italicstart = 0, boldlines = 0, italiclines = 0, typestart = 0, i = 0;
+        string styleidentifier = "",copytext = "",textchecker="";
         private string response = "";
 
 
@@ -36,18 +34,18 @@ namespace Reader
         {
             try
             {
-             //   Console.Write("enter the location of the file: ");
-              //  FileLocation = Console.ReadLine();
+                //   Console.Write("enter the location of the file: ");
+                //  FileLocation = Console.ReadLine();
                 string t = Path.GetExtension(FileLocation);
                 // Console.WriteLine(t);
                 Console.WriteLine();
                 if (t == ".docx" || t == ".xml")
                 {
-                   // createWriteLocation(FileLocation);
-                    Reader(FileLocation);
-                    //Writer(LinedText, write_loc);
-                    //bold italic is 1,italic bold is 2,bold is 3,italic is 4 
-                    styleChecker(LinedText,bold_italic,italic_bold,bold_parameters, italic_parameters);
+                    createWriteLocation();
+                    function();
+                    ender(i);
+                    dispOnConsole(finalText);
+                    Writer(finalText, write_loc);
                 }
                 else
                 {
@@ -60,94 +58,141 @@ namespace Reader
             }
             return FileLocation;
         }
-        public void styleChecker(string[] text, string st1, string st2, string st3, string st4)
+        public void ender(int i)
         {
-            int i = 0;
-            foreach(string line in text)
+            if (boldstart == 1)
             {
-                lineSplitter(line);
-                foreach (string words in WordedText)
-                {
-                    //starters
-                    {
-                        //bold italic starter
-                        if (words.Contains(st1) && bold == 0 && italic == 0)
-                        {
-                            finalText[i] += "**_" + words;
-                            bold = 1;
-                            italic = 1;
-                        }
-                        //italic bold starter
-                        else if (words.Contains(st2) && bold == 0 && italic == 0)
-                        {
-                            finalText[i] +=  "_**" + words;
-                            bold = 1;
-                            italic = 1;
-                        }
-                        //bold starter
-                        else if (words.Contains(st3) && bold == 0)
-                        {
-                            finalText[i] += "**" + words;
-                            bold = 1;
-                        }
-                        //italic starter
-                        else if (words.Contains(st4) && italic == 0)
-                        {
-                            finalText[i] += "_" + words;
-                            italic = 1;
-                        }
-                    }
-                    //when style is started
-                    {
-                        //bold italic 
-                        if (words.Contains(st1) && bold == 0 && italic == 1)
-                        {
-                            finalText[i] += "**" + words;
-                            bold = 1;
-                        }
-                        //italic bold
-                        else if (words.Contains(st2) && bold == 0 && italic == 1)
-                        {
-                            finalText[i] += "**" + words;
-                            bold = 1;
-                        }
-                        //bold italic
-                        else if (words.Contains(st1) && bold == 1 && italic == 0)
-                        {
-                            finalText[i] += "_" + words;
-                            italic = 1;
-                        }
-                        //italic bold
-                        else if (words.Contains(st2) && bold == 1 && italic == 0)
-                        {
-                            finalText[i] += "_" + words;
-                            italic = 1;
-                        }
-                        //bold 
-                        else if (words.Contains(st3) && bold == 1)
-                        {
-                            finalText[i] += words;
-                        }
-                        //italic
-                        else if (words.Contains(st4) && italic == 1)
-                        {
-                            finalText[i] += words;
-                        }
-                    }
-                }
-                //Writer(WordedText, write_loc);
-                i++;
+                finalText[i - 2] += "**";
+            }
+            if (italicstart == 1)
+            {
+                finalText[i - 2] += "_";
             }
         }
-        public void lineSplitter(string lines)
-        {
-                WordedText = lines.Split("</w:t></w:r>");
+        public void function()
+        {   // new xdoc instance 
+            XmlDocument xDoc = new XmlDocument();
+            //load up the xml from the location 
+            xDoc.Load(FileLocation);
+            i = 0;
+            //important logic that can help solve the problem
+            foreach (XmlNode node in xDoc.DocumentElement.ChildNodes)
+            {
+                foreach (XmlNode locNode in node)
+                {
+                    foreach (XmlNode text in locNode)
+                    {
+                         foreach (XmlNode locNode3 in text)
+                        {
+                            foreach (XmlNode style in locNode3)
+                            {
+                                XmlNodeType type = style.NodeType;
+                                if (type == XmlNodeType.Element)
+                                {
+                                    textchecker = text.LocalName;
+                                    //the type of style
+                                    styleidentifier = style.LocalName;
+                                    //the text of the above style to copy
+                                    copytext = text.InnerText;
+                                    //the final checker
+                                    if (textchecker == "r")
+                                    {
+                                    typestart = 1;
+                                        checker(styleidentifier, bold, i);
+                                    }
+                                }
+                                else if (type == XmlNodeType.Text&&typestart==0)
+                                {
+                                    styleidentifier = "";
+                                    checker(styleidentifier, bold, i);
+                                    copytext = text.InnerText;
+                                    finalText[i] += copytext;
+                                    typestart = 0;
+                                }
+                                else
+                                {
+                                    typestart = 0;
+                                }
+                                if (type == XmlNodeType.SignificantWhitespace)
+                                {
+                                    styleidentifier = "";
+                                    checker(styleidentifier, bold, i);
+                                    finalText[i] += " ";
+                                    typestart = 0;
+                                }
+                            }
+                        }
+                    }
+                   // Console.WriteLine(finalText[i]);
+                    i++;
+                }
+            }
         }
+        public void dispOnConsole(string[] text)
+        {
+           foreach(string t in text)
+            {
+                Console.WriteLine(t);
+            }
+        }
+        public void checker(string style,string bold,int i)
+        {
+            //for bold data
+            {
+                //for bold starting
+                if (style == bold && boldstart == 0)
+                {
+                    finalText[i] += "**" + copytext;
+                    boldstart = 1;
+                }
+                //when bold is initialized
+                else if (style == bold && boldstart == 1)
+                {
+                    boldlines++;
+                    finalText[i] += copytext;
+                }
+                //when bold ends
+                else if (!(style == bold) && boldstart == 1)
+                {
+                    // boldlines++;
+                    finalText[i - (boldlines)] += "**";
+                    boldstart = 0;
+                }
+            }
+            //for italic data
+            {
+                //for italic starting
+                if (style == italic && italicstart == 0)
+                {
+                    finalText[i] += "_" + copytext;
+                    italicstart = 1;
+                }
+                //when italic is initialized
+                else if (style == italic && italicstart == 1)
+                {
+                    italiclines++;
+                    finalText[i] += copytext;
+                }
+                //when italic ends
+                else if (!(style == italic) && italicstart == 1)
+                {
+                    // boldlines++;
+                    finalText[i - italiclines+1] += "_";
+                    italicstart = 0;
+                }
+                /*
+                else if ((style != italic) && (style != bold) && (italicstart == 0) && (boldstart == 0))
+                {
+                    finalText[i] += copytext;
+                }
+                */
+            }
 
+        }
         /// <summary>
         /// Creates a new location to write the contents of file to
         /// </summary>
-        public string createWriteLocation(string FileLocation)
+        public string createWriteLocation()
         {
             try
             {
@@ -163,7 +208,7 @@ namespace Reader
                         Console.Write("Directory does not exsits....create one?: ");
                         response = Console.ReadLine();
                         response = response.ToLower();
-                        if (response[0] =='y')
+                        if (response[0] == 'y')
                         {
                             Directory.CreateDirectory(write_loc);
                         }
@@ -183,53 +228,15 @@ namespace Reader
             return write_loc;
         }
 
-        /// <summary>
-        /// Reads and splits the xml text into each seperate line
-        /// </summary>
-        public void Reader(string fileloc)
-        {
-            XmlTextReader textReader = new XmlTextReader(fileloc);
-            textReader.Read();
-            XmlDocument xdoc = new XmlDocument();
-            xdoc.Load(textReader);
-            try
-            {
-                //the raw text is extracted from the xml onto the string
-                totalRawText = xdoc.DocumentElement.InnerXml;
-                //                Console.WriteLine(totalRawText);
-                Splitter(totalRawText, "</w:p>");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-        /// <summary>
-        /// splits the xml text with the given pattern
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="pattern"></param>
-        public static void Splitter(string text, string pattern)
-        {
-            //spliting each line of text into an array
-            LinedText = totalRawText.Split(pattern);
-            //iterating through each index of the total text lines
-          /*  foreach (string t in LinedText)
-            {
-                Console.WriteLine(t);
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine();
-            }*/
-        }
+
         /// <summary>
         /// writes the contents of string array to a new file in each line
         /// </summary>
         /// <param name="text"></param>
         /// <param name="outputLocation"></param>
-        public void Writer(string[] text,string outputLocation)
+        public void Writer(string[] text, string outputLocation)
         {
-            foreach(string t in text)
+            foreach (string t in text)
             {
                 System.IO.File.AppendAllText(outputLocation, t);
             }

@@ -30,7 +30,7 @@ namespace Reader
         private string standby = "";
         public void read()
         {
-           
+
             try
             {
                 //  Console.Write("enter the location of the file: ");
@@ -74,14 +74,15 @@ namespace Reader
 
                // foreach (XmlNode node in xDoc.DocumentElement.ChildNodes)
                 {
-                   // foreach (XmlNode locNode in node)
+                 //   foreach (XmlNode locNode in node)
                     {
                         linecount++;
                     }
+                
                     filedata = new string[15];
                     totdata = new string[15];
-                   // foreach (XmlNode locNode in node)
-                   foreach(string t in fintext)
+                    // foreach (XmlNode locNode in node)
+                    foreach (string t in fintext)
                     {
                         // get the content of the loc node 
                         string maintext = t; //locNode.InnerXml;
@@ -132,11 +133,11 @@ namespace Reader
                     }
                     if (boldstart == 1)
                     {
-                        totdata[i-2] += "**";
+                        totdata[i - 2] += "**";
                     }
                     if (italicstart == 1)
                     {
-                        totdata[i-2] += "_";
+                        totdata[i - 2] += "_";
                     }
                 }
 
@@ -273,7 +274,7 @@ namespace Reader
                         //   Console.WriteLine(filedata[i]);
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
