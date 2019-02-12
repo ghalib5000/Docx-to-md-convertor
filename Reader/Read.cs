@@ -14,8 +14,10 @@ namespace Reader
     class Read : IRead
     {
 
-        private static string FileLocation2 = @"D:\convertor\test - Copy - Copy\word\document.xml";
-        private static string FileLocation = @"D:\convertor\test.docx";
+        private static string FileLocation = @"C:\Windows\Temp\temp\word\document.xml";
+        private static string FileLocation2 = @"D:\convertor\test.docx";
+        private static string extract_path = @"C:\Windows\Temp\temp\";
+        private static string copyPath = @"C:\Windows\Temp\temp.zip";
         private static string write_loc = @"D:\";
         private static string[] StandbyText = new string[3];
         private static string[] filedata = new string[15];
@@ -28,25 +30,24 @@ namespace Reader
 
 
         /// <summary>
-        /// reads the contents of the file
+        /// reads the contents of the file and does stuff to it :3
         /// </summary>
-        public string File()
+        public void File()
         {
             try
             {
                 //   Console.Write("enter the location of the file: ");
-                //  FileLocation = Console.ReadLine();
-                string t = Path.GetExtension(FileLocation);
-                // Console.WriteLine(t);
-                Console.WriteLine();
+                //  FileLocation2 = Console.ReadLine();
+                string t = Path.GetExtension(FileLocation2);
                 if (t == ".docx" || t == ".xml")
                 {
-                    mover(FileLocation);
-                   // createWriteLocation();
-                    //function();
-                    //ender(i);
-                    //dispOnConsole(finalText);
-                   // Writer(finalText, write_loc);
+                    mover(FileLocation2,copyPath);
+                    extractor(copyPath,extract_path);
+                    createWriteLocation();
+                    function();
+                    ender(i);
+                    dispOnConsole(finalText);
+                    Writer(finalText, write_loc);
                 }
                 else
                 {
@@ -57,15 +58,24 @@ namespace Reader
             {
                 Console.WriteLine(ex);
             }
-            return FileLocation;
         }
-        public void mover(string loc)
+        /// <summary>
+        /// moves the loc file to the path destination
+        /// </summary>
+        /// <param name="loc"></param>
+        /// <param name="path"></param>
+        public void mover(string loc,string path)
         {
-            System.IO.File.Move(loc, @"C:\Windows\Temp\temp.zip");
+            System.IO.File.Copy(loc, path,true);
         }
-        public void extractor(string loc)
+        /// <summary>
+        /// extracts the loc file to dest destination
+        /// </summary>
+        /// <param name="loc"></param>
+        /// <param name="dest"></param>
+        public void extractor(string loc,string dest)
         {
-
+            System.IO.Compression.ZipFile.ExtractToDirectory (loc, dest,true);
         }
         public void ender(int i)
         {
@@ -78,6 +88,9 @@ namespace Reader
                 finalText[i - 2] += "_";
             }
         }
+        /// <summary>
+        /// a function which does all the important things
+        /// </summary>
         public void function()
         {   // new xdoc instance 
             XmlDocument xDoc = new XmlDocument();
@@ -166,6 +179,10 @@ namespace Reader
                 }
             }
         }
+        /// <summary>
+        /// displays the text on the console
+        /// </summary>
+        /// <param name="text"></param>
         public void dispOnConsole(string[] text)
         {
            foreach(string t in text)
@@ -173,6 +190,11 @@ namespace Reader
                 Console.WriteLine(t);
             }
         }
+        /// <summary>
+        /// checks for styles in text
+        /// </summary>
+        /// <param name="style"></param>
+        /// <param name="i"></param>
         public void checker(string style, int i)
         {
             //for bold italic or italic bold
@@ -315,7 +337,7 @@ namespace Reader
         {
             foreach (string t in text)
             {
-                System.IO.File.AppendAllText(outputLocation, t);
+                System.IO.File.AppendAllText(outputLocation, t+ Environment.NewLine);
             }
         }
     }
