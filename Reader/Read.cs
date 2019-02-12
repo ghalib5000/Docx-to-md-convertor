@@ -14,15 +14,15 @@ namespace Reader
     class Read : IRead
     {
 
-        private static string FileLocation = @"D:\convertor\test - Copy\word\document.xml";
-        private static string FileLocation2 = @"D:\convertor\test.docx";
+        private static string FileLocation2 = @"D:\convertor\test - Copy - Copy\word\document.xml";
+        private static string FileLocation = @"D:\convertor\test.docx";
         private static string write_loc = @"D:\";
         private static string[] StandbyText = new string[3];
         private static string[] filedata = new string[15];
         private static string[] finalText = new string[15];
         private static string bold ="b" ;
         private static string italic = "i";
-        int boldstart = 0, italicstart = 0, boldlines = 0, italiclines = 0, typestart = 0, i = 0;
+        int boldstart = 0, italicstart = 0, boldlines = 0, italiclines = 0, typestart = 0, i = 0, errcnt = 0;
         string styleidentifier = "",copytext = "",textchecker="";
         private string response = "";
 
@@ -41,11 +41,12 @@ namespace Reader
                 Console.WriteLine();
                 if (t == ".docx" || t == ".xml")
                 {
-                    createWriteLocation();
-                    function();
-                    ender(i);
-                    dispOnConsole(finalText);
-                    Writer(finalText, write_loc);
+                    mover(FileLocation);
+                   // createWriteLocation();
+                    //function();
+                    //ender(i);
+                    //dispOnConsole(finalText);
+                   // Writer(finalText, write_loc);
                 }
                 else
                 {
@@ -57,6 +58,14 @@ namespace Reader
                 Console.WriteLine(ex);
             }
             return FileLocation;
+        }
+        public void mover(string loc)
+        {
+            System.IO.File.Move(loc, @"C:\Windows\Temp\temp.zip");
+        }
+        public void extractor(string loc)
+        {
+
         }
         public void ender(int i)
         {
@@ -86,40 +95,69 @@ namespace Reader
                         {
                             foreach (XmlNode style in locNode3)
                             {
-                                XmlNodeType type = style.NodeType;
-                                if (type == XmlNodeType.Element)
+                                if (errcnt == 0)
                                 {
-                                    textchecker = text.LocalName;
                                     //the type of style
                                     styleidentifier = style.LocalName;
-                                    //the text of the above style to copy
-                                    copytext = text.InnerText;
-                                    //the final checker
-                                    if (textchecker == "r")
-                                    {
-                                    typestart = 1;
-                                        checker(styleidentifier, bold, i);
-                                    }
                                 }
-                                else if (type == XmlNodeType.Text&&typestart==0)
+                                //the text of the above style to copy
+                                copytext = text.InnerText;
+                                //if they are not equal then there are 2 style that are being used
+                                if (locNode3.FirstChild==locNode3.LastChild)
                                 {
-                                    styleidentifier = "";
-                                    checker(styleidentifier, bold, i);
-                                    copytext = text.InnerText;
-                                    finalText[i] += copytext;
-                                    typestart = 0;
+                                    XmlNodeType type = style.NodeType;
+                                    if (type == XmlNodeType.Element)
+                                    {
+                                        textchecker = text.LocalName;
+                                        //the final checker
+                                        if (textchecker == "r")
+                                        {
+                                            typestart = 1;
+                                            checker(styleidentifier, i);
+                                        }
+                                    }
+                                    else if (type == XmlNodeType.Text && typestart == 0&&(styleidentifier == "bi"|| styleidentifier == "ib"))
+                                    {
+                                        //styleidentifier = "";
+                                        checker(styleidentifier, i);
+                                        //copytext = text.InnerText;
+                                        //finalText[i] += copytext;
+                                        typestart = 0;
+                                    }
+                                    else if (type == XmlNodeType.Text && typestart == 0)
+                                    {
+                                        //styleidentifier = "";
+                                        checker(styleidentifier, i);
+                                        copytext = text.InnerText;
+                                        finalText[i] += copytext;
+                                        typestart = 0;
+                                    }
+                                    else
+                                    {
+                                        typestart = 0;
+                                    }
+                                    if (type == XmlNodeType.SignificantWhitespace)
+                                    {
+                                        // styleidentifier = "";
+                                        checker(styleidentifier, i);
+                                        finalText[i] += " ";
+                                        typestart = 0;
+                                    }
+                                    errcnt = 0;
                                 }
                                 else
                                 {
-                                    typestart = 0;
+                                    errcnt = 1;
+                                    if(styleidentifier=="b")
+                                    {
+                                        styleidentifier += "i";
+                                    }
+                                    else if (styleidentifier == "i")
+                                    {
+                                        styleidentifier += "b";
+                                    }
                                 }
-                                if (type == XmlNodeType.SignificantWhitespace)
-                                {
-                                    styleidentifier = "";
-                                    checker(styleidentifier, bold, i);
-                                    finalText[i] += " ";
-                                    typestart = 0;
-                                }
+                                
                             }
                         }
                     }
@@ -135,12 +173,55 @@ namespace Reader
                 Console.WriteLine(t);
             }
         }
-        public void checker(string style,string bold,int i)
+        public void checker(string style, int i)
         {
-            //for bold data
+            //for bold italic or italic bold
             {
+                //if none of them are started
+                if (style == "bi" && boldstart == 0 && italicstart == 0)
+                {
+                    finalText[i] += "**_" + copytext;
+                    boldstart = 1;
+                    italicstart = 1;
+                }
+                //if none of them are started
+                else if (style == "ib" && boldstart == 0 && italicstart == 0)
+                {
+                    finalText[i] += "_**" + copytext;
+                    boldstart = 1;
+                    italicstart = 1;
+                }
+                //if none of them are started
+                else if (style == "bi" && boldstart == 1 && italicstart == 0)
+                {
+                    finalText[i] += "_" + copytext;
+                    boldlines = 1;
+                    italicstart = 1;
+                }
+                //if none of them are started
+                else if (style == "ib" && boldstart == 0 && italicstart == 1)
+                {
+                    finalText[i] += "**" + copytext;
+                    boldstart = 1;
+                    italiclines = 1;
+                }
+                //if none of them are started
+                else if (style == "bi" && boldstart == 1 && italicstart == 1)
+                {
+                    finalText[i] += copytext;
+                    boldlines = 1;
+                    italiclines = 1;
+                }
+                //if none of them are started
+                else if (style == "ib" && boldstart == 1 && italicstart == 1)
+                {
+                    finalText[i] += "**_" + copytext;
+                    boldlines = 1;
+                    italiclines = 1;
+                }
+                //for bold data
                 //for bold starting
-                if (style == bold && boldstart == 0)
+                else if (style == bold && boldstart == 0)
                 {
                     finalText[i] += "**" + copytext;
                     boldstart = 1;
@@ -155,14 +236,12 @@ namespace Reader
                 else if (!(style == bold) && boldstart == 1)
                 {
                     // boldlines++;
-                    finalText[i - (boldlines)] += "**";
+                    finalText[i] += "**";
                     boldstart = 0;
                 }
-            }
-            //for italic data
-            {
+                //for italic data
                 //for italic starting
-                if (style == italic && italicstart == 0)
+                else if (style == italic && italicstart == 0)
                 {
                     finalText[i] += "_" + copytext;
                     italicstart = 1;
@@ -177,9 +256,10 @@ namespace Reader
                 else if (!(style == italic) && italicstart == 1)
                 {
                     // boldlines++;
-                    finalText[i - italiclines+1] += "_";
+                    finalText[i] += "_";
                     italicstart = 0;
                 }
+
                 /*
                 else if ((style != italic) && (style != bold) && (italicstart == 0) && (boldstart == 0))
                 {
@@ -187,7 +267,6 @@ namespace Reader
                 }
                 */
             }
-
         }
         /// <summary>
         /// Creates a new location to write the contents of file to
@@ -227,8 +306,6 @@ namespace Reader
             }
             return write_loc;
         }
-
-
         /// <summary>
         /// writes the contents of string array to a new file in each line
         /// </summary>
