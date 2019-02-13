@@ -33,8 +33,8 @@ namespace Reader
 
             try
             {
-                   //Console.Write("enter the location of the file: ");
-                  // FileLocation2 = Console.ReadLine();
+                   Console.Write("Enter the location of the file: ");
+                   FileLocation2 = Console.ReadLine();
                 string t = Path.GetExtension(FileLocation2);
                 if (t == ".docx" || t == ".xml")
                 {
