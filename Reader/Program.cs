@@ -1,18 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Word = Microsoft.Office.Interop.Word;
-using Microsoft.Office.Interop.Word;
 
 
-namespace Reader
+namespace Reader 
 {
-    class Program
+    class Program: Logger
     {
         static void Main(string[] args)
         {
+            
             IRead document = new Read();
-             document.File();
-           }
+            document.File();
+        }
     }
 }

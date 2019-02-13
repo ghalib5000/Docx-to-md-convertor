@@ -7,19 +7,8 @@
   "targets": {
     ".NETCoreApp,Version=v2.1": {
       "Reader/1.0.0": {
-        "dependencies": {
-          "Microsoft.Office.Interop.Word": "15.0.0.0"
-        },
         "runtime": {
           "Reader.dll": {}
-        }
-      },
-      "Microsoft.Office.Interop.Word/15.0.0.0": {
-        "runtime": {
-          "Microsoft.Office.Interop.Word.dll": {
-            "assemblyVersion": "15.0.0.0",
-            "fileVersion": "15.0.4797.1003"
-          }
         }
       }
     }
@@ -27,11 +16,6 @@
   "libraries": {
     "Reader/1.0.0": {
       "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Microsoft.Office.Interop.Word/15.0.0.0": {
-      "type": "reference",
       "serviceable": false,
       "sha512": ""
     }
