@@ -17,7 +17,6 @@ namespace Reader
         private static string copyPath = @"C:\Windows\Temp\temp.zip";
         private static string write_loc = @"D:\";
         private static string[] StandbyText = new string[3];
-       // private static string[] filedata = new string[10];
         private static string[] finalText = new string[1000];
         private static string bold = "b";
         private static string italic = "i";
@@ -36,7 +35,7 @@ namespace Reader
                    Console.Write("Enter the location of the file: ");
                    FileLocation2 = Console.ReadLine();
                 string t = Path.GetExtension(FileLocation2);
-                if (t == ".docx" || t == ".xml")
+                if (t == ".docx")
                 {
                     mover(FileLocation2, copyPath);
                     extractor(copyPath, extract_path);

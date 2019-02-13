@@ -6,8 +6,8 @@ namespace Reader
 {
     class Logger
     {
-        static string date = DateTime.Now.ToString("h.mm.ss.tt");
-        private readonly string logloc = @"C:\Windows\Temp\log_docx_to_md."+date+".txt";
+        static string date = DateTime.Now.ToString("yyyy_MM_dd");
+        private readonly string logloc = @"C:\Windows\Temp\Log_"+date+".log";
         public Logger()
         {
             string t = "Logging started at " + DateTime.Now+Environment.NewLine;
