@@ -15,17 +15,17 @@ namespace Reader
     {
 
         private static string FileLocation = @"C:\Windows\Temp\temp\word\document.xml";
-        private static string FileLocation2 = @"D:\convertor\test.docx";
+        private static string FileLocation2 = @"D:\convertor\CP Class activity.docx";
         private static string extract_path = @"C:\Windows\Temp\temp\";
         private static string copyPath = @"C:\Windows\Temp\temp.zip";
         private static string write_loc = @"D:\";
         private static string[] StandbyText = new string[3];
-        private static string[] filedata = new string[15];
-        private static string[] finalText = new string[15];
+        private static string[] filedata = new string[100];
+        private static string[] finalText = new string[100];
         private static string bold ="b" ;
         private static string italic = "i";
-        int boldstart = 0, italicstart = 0, boldlines = 0, italiclines = 0, typestart = 0, i = 0, errcnt = 0;
-        string styleidentifier = "",copytext = "",textchecker="";
+        private int boldstart = 0, italicstart = 0, boldlines = 0, italiclines = 0, typestart = 0, i = 0, errcnt = 0;
+        private string styleidentifier = "",copytext = "",textchecker="";
         private string response = "";
 
 
@@ -263,7 +263,7 @@ namespace Reader
                 }
                 //for italic data
                 //for italic starting
-                else if (style == italic && italicstart == 0)
+                 if (style == italic && italicstart == 0)
                 {
                     finalText[i] += "_" + copytext;
                     italicstart = 1;

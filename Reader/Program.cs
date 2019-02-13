@@ -11,7 +11,7 @@ namespace Reader
     {
         static void Main(string[] args)
         {
-            Read document = new Read();
+            IRead document = new Read();
              document.File();
            }
     }

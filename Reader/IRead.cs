@@ -10,7 +10,7 @@ namespace Reader
 {
     interface IRead
     {
-      //  string File();
+       void File();
       //  string Write();
 //void Convert(string input, string output);
     }
